@@ -476,4 +476,151 @@ namespace bw64 {
     std::map<uint32_t, uint64_t> table_;
   };
 
+
+  /**
+ * @brief Class representation of an AxmlChunk
+ */
+  class BextChunk : public Chunk {
+  public:
+      uint32_t id() const override { return utils::fourCC("bext"); }
+      uint64_t size() const override
+      {
+          return 602 + codingHistory_.size(); 
+      }
+
+      BextChunk()
+          : timeReference_(0)
+          , version_(0)
+          , loudnessValue_(0)
+          , loudnessRange_(0)
+          , maxTruePeakLevel_(0)
+          , maxMomentaryLoudness_(0)
+          , maxShortTermLoudness_(0)
+      {
+          memset(description_, 0, 256);
+          memset(originator_, 0, 32);
+          memset(originatorReference_, 0, 32);
+          memset(origindate_, 0, 10);
+          memset(origintime_, 0, 8);
+          memset(smpteUMID_, 0, 64);
+          memset(reserved_, 0, 180);
+      };
+
+      BextChunk(std::string description,
+          std::string originator,
+          std::string originatorReference,
+          std::string origindate,
+          std::string origintime,
+          uint64_t timeReference,
+          uint16_t version,
+          std::vector<unsigned char> smpteUMID,
+          uint16_t loudnessValue,
+          uint16_t loudnessRange,
+          uint16_t maxTruePeakLevel,
+          uint16_t maxMomentaryLoudness,
+          uint16_t maxShortTermLoudness,
+          std::vector<char> codingHistory)
+      {
+          if (description.size()         > 256) throw std::runtime_error("illegal bext description size");
+          if (originator.size()          > 32)  throw std::runtime_error("illegal bext originator size");
+          if (originatorReference.size() > 32)  throw std::runtime_error("illegal bext originatorReference size");
+          if (origindate.size()          > 10)  throw std::runtime_error("illegal bext origindate size");
+          if (origintime.size()          > 8)   throw std::runtime_error("illegal bext origintime size");
+          if (smpteUMID.size()           > 64)  throw std::runtime_error("illegal bext smpteUMID size");
+
+          memset(description_, 0, 256);
+          memset(originator_, 0, 32);
+          memset(originatorReference_, 0, 32);
+          memset(origindate_, 0, 10);
+          memset(origintime_, 0, 8);
+          memset(smpteUMID_, 0, 64);
+          memset(reserved_, 0, 180);
+
+          std::copy(description.begin(),         description.end(),         (char*)description_);
+          std::copy(originator.begin(),          originator.end(),          (char*)originator_);
+          std::copy(originatorReference.begin(), originatorReference.end(), (char*)originatorReference_);
+          std::copy(origindate.begin(),          origindate.end(),          (char*)origindate_);
+          std::copy(origintime.begin(),          origintime.end(),          (char*)origintime_);
+
+          timeReference_        = timeReference;
+          version_              = version;
+
+          std::copy(smpteUMID.begin(),           smpteUMID.end(),           (char*)smpteUMID_);
+
+          loudnessValue_        = loudnessValue;
+          loudnessRange_        = loudnessRange;
+          maxTruePeakLevel_     = maxTruePeakLevel;
+          maxMomentaryLoudness_ = maxMomentaryLoudness;
+          maxShortTermLoudness_ = maxShortTermLoudness;
+          codingHistory_        = codingHistory;
+
+          memset(reserved_, 0, 180);
+      }
+
+
+      BextChunk(std::istream& stream, uint64_t size);
+
+      std::string description() const              { return std::string(description_, description_ + 256); }
+      std::string originator() const               { return std::string(originator_, originator_ + 32); }
+      std::string originatorReference() const      { return std::string(originatorReference_, originatorReference_+32); }
+      std::string origindate() const               { return std::string(origindate_, origindate_ + 10);  }
+      std::string origintime() const               { return std::string(origintime_, origintime_ + 8); }
+      uint64_t    timeReference() const            { return timeReference_; }
+      uint64_t    version() const                  { return version_; }
+      const unsigned char* smpteUMID() const       { return smpteUMID_; }
+      uint16_t loudnessValue() const               { return loudnessValue_; }
+      uint16_t loudnessRange() const               { return loudnessRange_; }
+      uint16_t maxTruePeakLevel() const            { return maxTruePeakLevel_; }
+      uint16_t maxMomentaryLoudness() const        { return maxMomentaryLoudness_; }
+      uint16_t maxShortTermLoudness() const        { return maxShortTermLoudness_; }
+
+      /*
+       * @brief Write the BextChunk to a stream
+       */
+      void write(std::ostream& stream) const override {
+
+          stream.write(description_, 256);
+          stream.write(originator_, 32);
+          stream.write(originatorReference_, 32);
+          stream.write(origindate_, 10);
+          stream.write(origintime_, 8);
+
+          utils::writeValue(stream, timeReference_);
+          utils::writeValue(stream, version_);
+
+          stream.write(reinterpret_cast<const char*>(smpteUMID_), 64);
+
+          utils::writeValue(stream, loudnessValue_);
+          utils::writeValue(stream, loudnessRange_);
+          utils::writeValue(stream, maxTruePeakLevel_);
+          utils::writeValue(stream, maxMomentaryLoudness_);
+          utils::writeValue(stream, maxShortTermLoudness_);
+          stream.write(reinterpret_cast<const char*>(reserved_), 180);
+          stream.write(reinterpret_cast<const char*>(codingHistory_.data()), codingHistory_.size());
+
+      }
+
+  private:
+      char description_[256];         // Description of the sound sequence
+      char originator_[32];           // Name of the originator
+      char originatorReference_[32];  // Reference of the originator
+      char origindate_[10];           // yyyy:mm:dd
+      char origintime_[8];            // hh:mm:ss
+      uint64_t timeReference_;        // First sample count since midnight
+      uint16_t version_;              // Version of the BWF
+      unsigned char smpteUMID_[64];   // SMPTE UMID
+      uint16_t loudnessValue_;        // Integrated Loudness Value of the file in LUFS(multiplied by 100)
+      uint16_t loudnessRange_;        // Loudness Range of the file in LU (multiplied by 100)
+      uint16_t maxTruePeakLevel_;     // Maximum True Peak Level of the file expressed as dBTP(multiplied by 100)
+      uint16_t maxMomentaryLoudness_; // Highest value of the Momentary Loudness Level of the file in LUFS(multiplied by 100)
+      uint16_t maxShortTermLoudness_; // Highest value of the Short-Term Loudness Level of the file in LUFS(multiplied by 100)
+      unsigned char reserved_[180];   // 180 bytes, reserved for future use, set to “NULL”
+
+      std::vector<char> codingHistory_;  //  History coding - See EBU Recommendation R 98
+
+
+      
+  };
+
+
 }  // namespace bw64

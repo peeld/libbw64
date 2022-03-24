@@ -231,6 +231,56 @@ namespace bw64 {
     return dataChunk;
   }
 
+  inline std::shared_ptr<BextChunk> parseBextChunk(std::istream& stream,
+                                                   uint32_t id, uint64_t size) {
+
+      if (id != utils::fourCC("bext")) {
+          std::stringstream errorString;
+          errorString << "chunkId != 'bext'";
+          throw std::runtime_error(errorString.str());
+      }
+
+      if (size < 602) {
+          throw std::runtime_error("illegal bext chunk size");
+      }
+
+      return std::make_shared<BextChunk>(stream, size);
+  }
+
+
+  inline BextChunk::BextChunk(std::istream& stream, uint64_t size)
+  {
+      if (size < 602)
+      {
+          throw std::runtime_error("illegal bext chunk size");
+      }
+      utils::readChunk(stream, description_, 256);
+      utils::readChunk(stream, originator_, 32);
+      utils::readChunk(stream, originatorReference_, 32);
+      utils::readChunk(stream, origindate_, 10);
+      utils::readChunk(stream, origintime_, 8);
+      utils::readValue(stream, timeReference_);
+      utils::readValue(stream, version_);
+      utils::readChunk(stream, (char*)smpteUMID_, 64);
+      utils::readValue(stream, loudnessValue_);
+      utils::readValue(stream, loudnessRange_);
+      utils::readValue(stream, maxTruePeakLevel_);
+      utils::readValue(stream, maxMomentaryLoudness_);
+      utils::readValue(stream, maxShortTermLoudness_);
+      utils::readChunk(stream, (char*)reserved_, 180);
+
+      if (size == 602)
+      {
+          codingHistory_.clear();
+      }
+      else
+      {
+          codingHistory_.resize(size - 602);
+          utils::readChunk(stream, codingHistory_.data(), size - 602);
+      }
+     
+  }
+
   inline std::shared_ptr<Chunk> parseChunk(std::istream& stream,
                                            ChunkHeader header) {
     stream.clear();
@@ -249,9 +299,13 @@ namespace bw64 {
       return parseChnaChunk(stream, header.id, header.size);
     } else if (header.id == utils::fourCC("data")) {
       return parseDataChunk(stream, header.id, header.size);
+    } else if (header.id == utils::fourCC("bext")) {
+      return parseBextChunk(stream, header.id, header.size);
     } else {
       return std::make_shared<UnknownChunk>(stream, header.id, header.size);
     }
   }
+
+
 
 }  // namespace bw64

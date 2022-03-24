@@ -188,6 +188,16 @@ namespace bw64 {
     }
 
     /**
+     * @brief Get 'bext' chunk
+     *
+     * @returns `std::shared_ptr` to BextChunk if present and otherwise a
+     * nullptr.
+     */
+    std::shared_ptr<BextChunk> bextChunk() const {
+        return chunk<BextChunk>(chunks_, utils::fourCC("bext"));
+    }
+
+    /**
      * @brief Get list of all chunks which are present in the file
      */
     std::vector<ChunkHeader> chunks() const { return chunkHeaders_; }
