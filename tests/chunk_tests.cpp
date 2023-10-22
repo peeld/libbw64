@@ -4,6 +4,7 @@
 #include "bw64/utils.hpp"
 
 using namespace bw64;
+using namespace Catch;
 
 TEST_CASE("format_info_chunk") {
   // basic test

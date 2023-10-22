@@ -5,6 +5,7 @@
 #include "bw64/bw64.hpp"
 
 using namespace bw64;
+using namespace Catch;
 
 TEST_CASE("fourCC") {
   REQUIRE(utils::fourCCToStr(utils::fourCC("RIFF")) == "RIFF");

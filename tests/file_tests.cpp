@@ -4,6 +4,7 @@
 #include "bw64/bw64.hpp"
 
 using namespace bw64;
+using namespace Catch;
 
 TEST_CASE("read_file_not_found") {
   REQUIRE_THROWS_AS(readFile("file_not_found.wav"), std::runtime_error);
