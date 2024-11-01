@@ -81,13 +81,22 @@ namespace bw64 {
       seek(0);
     }
 
-    /**
-     * @brief Bw64Reader destructor
-     *
-     * The destructor will automatically close the file opened in the
-     * constructor.
-     */
-    ~Bw64Reader() { fileStream_.close(); }
+    /// close the file
+    ///
+    /// It is recommended to call this before the destructor, to handle
+    /// exceptions.
+    void close() {
+      if (!fileStream_.is_open()) return;
+
+      fileStream_.close();
+
+      if (!fileStream_.good())
+        throw std::runtime_error("file error detected when closing");
+    }
+
+    /// destructor; this will close the file if it has not already been done,
+    /// but it is recommended to call close() first to handle exceptions
+    ~Bw64Reader() { close(); }
 
     /// @brief Get file format (RIFF, BW64 or RF64)
     uint32_t fileFormat() const { return fileFormat_; }
@@ -220,6 +229,8 @@ namespace bw64 {
      * @brief Seek a frame position in the DataChunk
      */
     void seek(int32_t offset, std::ios_base::seekdir way = std::ios::beg) {
+      auto numberOfFramesInt = utils::safeCast<int64_t>(numberOfFrames());
+
       // where to seek relative to according to way
       int64_t startFrame = 0;
       if (way == std::ios::cur) {
@@ -227,15 +238,15 @@ namespace bw64 {
       } else if (way == std::ios::beg) {
         startFrame = 0;
       } else if (way == std::ios::end) {
-        startFrame = numberOfFrames();
+        startFrame = numberOfFramesInt;
       }
 
       // requested frame number, clamped to a frame within the data chunk
       int64_t frame = startFrame + offset;
       if (frame < 0)
         frame = 0;
-      else if (frame > numberOfFrames())
-        frame = numberOfFrames();
+      else if (frame > numberOfFramesInt)
+        frame = numberOfFramesInt;
 
       // the position in the file of the frame
       const int64_t dataStartPos =
@@ -257,8 +268,8 @@ namespace bw64 {
      *
      * @returns number of frames read
      */
-    template <typename T,
-              typename = std::enable_if<std::is_floating_point<T>::value>>
+    template <typename T, typename std::enable_if<
+                              std::is_floating_point<T>::value, int>::type = 0>
     uint64_t read(T* outBuffer, uint64_t frames) {
       if (tell() + frames > numberOfFrames()) {
         frames = numberOfFrames() - tell();

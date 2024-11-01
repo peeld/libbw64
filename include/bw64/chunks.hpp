@@ -4,6 +4,7 @@
 #include <iterator>
 #include <map>
 #include <set>
+#include <memory>
 #include <sstream>
 #include <stdexcept>
 #include <stdint.h>
@@ -116,10 +117,12 @@ namespace bw64 {
      * @param sampleRate sample rate of the audio data
      * @param bitDepth bit depth used in file
      * @param extraData custom ExtraData (optional, nullptr if not custom)
+     * @param formatTag format tag, defaults to PCM
      */
     FormatInfoChunk(uint16_t channels, uint32_t sampleRate, uint32_t bitDepth,
-                    std::shared_ptr<ExtraData> extraData = nullptr) {
-      formatTag_ = 1;
+                    std::shared_ptr<ExtraData> extraData = nullptr,
+                    uint16_t formatTag = 1) {
+      formatTag_ = formatTag;
       channelCount_ = channels;
       sampleRate_ = sampleRate;
       bitsPerSample_ = bitDepth;
@@ -182,10 +185,11 @@ namespace bw64 {
       utils::writeValue(stream, blockAlignment());
       utils::writeValue(stream, bitsPerSample());
       if (extraData()) {
+        utils::writeValue(stream, uint16_t{22});  // cbSize
         utils::writeValue(stream, extraData()->validBitsPerSample());
         utils::writeValue(stream, extraData()->dwChannelMask());
         utils::writeValue(stream, extraData()->subFormat());
-        utils::writeValue(stream, extraData()->subFormatString());
+        stream << extraData()->subFormatString();
       }
     }
 
@@ -252,9 +256,7 @@ namespace bw64 {
    public:
     static uint32_t Id() { return utils::fourCC("axml"); }
 
-    AxmlChunk(const std::string& axml) {
-      std::copy(axml.begin(), axml.end(), std::back_inserter(data_));
-    }
+    AxmlChunk(std::string axml) : data_(std::move(axml)) {}
 
     uint32_t id() const override { return AxmlChunk::Id(); }
     uint64_t size() const override { return data_.size(); }
@@ -262,13 +264,12 @@ namespace bw64 {
     /*
      * @brief Write the AxmlChunk to a stream
      */
-    void write(std::ostream& stream) const override {
-      std::copy(data_.begin(), data_.end(),
-                std::ostreambuf_iterator<char>(stream));
-    }
+    void write(std::ostream& stream) const override { stream << data_; }
+
+    const std::string& data() const { return data_; }
 
    private:
-    std::vector<char> data_;
+    std::string data_;
   };
 
   /**
@@ -338,6 +339,10 @@ namespace bw64 {
      * @brief Write the AudioId to a stream
      */
     void write(std::ostream& stream) const {
+      if (trackIndex_ == 0)
+        throw std::runtime_error(
+            "AudioId trackIndex is 1-based, so must not be zero");
+
       utils::writeValue(stream, trackIndex());
       utils::writeValue(stream, uid_);
       utils::writeValue(stream, trackRef_);
@@ -381,7 +386,9 @@ namespace bw64 {
       return static_cast<uint16_t>(trackIndices.size());
     }
     /// @brief NumUids getter
-    uint16_t numUids() const { return static_cast<uint16_t>(audioIds_.size()); }
+    uint16_t numUids() const {
+      return utils::safeCast<uint16_t>(audioIds_.size());
+    }
     /// @brief AudioIds getter
     std::vector<AudioId> audioIds() const { return audioIds_; }
     /// @brief Add AudioId to AudioId table
@@ -425,7 +432,7 @@ namespace bw64 {
     uint64_t dummySize() const { return dummySize_; }
     /// @brief TableLength getter
     uint32_t tableLength() const {
-      return static_cast<uint32_t>(table_.size());
+      return utils::safeCast<uint32_t>(table_.size());
     }
 
     /// @brief Bw64Size setter
