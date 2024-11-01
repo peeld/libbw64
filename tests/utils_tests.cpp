@@ -33,11 +33,11 @@ TEST_CASE("decode_pcm_samples_16bit") {
       "\x01\xc0";
   utils::decodePcmSamples(encoded16bit, decodedSamples, 5, 16);
 
-  REQUIRE(samples[0] == Approx(decodedSamples[0]).epsilon(1e-2));
-  REQUIRE(samples[1] == Approx(decodedSamples[1]).epsilon(1e-2));
-  REQUIRE(samples[2] == Approx(decodedSamples[2]).epsilon(1e-2));
-  REQUIRE(samples[3] == Approx(decodedSamples[3]).epsilon(1e-2));
-  REQUIRE(samples[4] == Approx(decodedSamples[4]).epsilon(1e-2));
+  REQUIRE(samples[0] == Catch::Detail::Approx(decodedSamples[0]).epsilon(1e-2));
+  REQUIRE(samples[1] == Catch::Detail::Approx(decodedSamples[1]).epsilon(1e-2));
+  REQUIRE(samples[2] == Catch::Detail::Approx(decodedSamples[2]).epsilon(1e-2));
+  REQUIRE(samples[3] == Catch::Detail::Approx(decodedSamples[3]).epsilon(1e-2));
+  REQUIRE(samples[4] == Catch::Detail::Approx(decodedSamples[4]).epsilon(1e-2));
 }
 
 TEST_CASE("decode_pcm_samples_24bit") {
@@ -52,11 +52,11 @@ TEST_CASE("decode_pcm_samples_24bit") {
       "\x01\x00\xc0";
   utils::decodePcmSamples(encoded24bit, decodedSamples, 5, 24);
 
-  REQUIRE(samples[0] == Approx(decodedSamples[0]).epsilon(1e-3));
-  REQUIRE(samples[1] == Approx(decodedSamples[1]).epsilon(1e-3));
-  REQUIRE(samples[2] == Approx(decodedSamples[2]).epsilon(1e-3));
-  REQUIRE(samples[3] == Approx(decodedSamples[3]).epsilon(1e-3));
-  REQUIRE(samples[4] == Approx(decodedSamples[4]).epsilon(1e-3));
+  REQUIRE(samples[0] == Catch::Detail::Approx(decodedSamples[0]).epsilon(1e-3));
+  REQUIRE(samples[1] == Catch::Detail::Approx(decodedSamples[1]).epsilon(1e-3));
+  REQUIRE(samples[2] == Catch::Detail::Approx(decodedSamples[2]).epsilon(1e-3));
+  REQUIRE(samples[3] == Catch::Detail::Approx(decodedSamples[3]).epsilon(1e-3));
+  REQUIRE(samples[4] == Catch::Detail::Approx(decodedSamples[4]).epsilon(1e-3));
 }
 
 TEST_CASE("decode_pcm_samples_32bit") {
@@ -71,11 +71,11 @@ TEST_CASE("decode_pcm_samples_32bit") {
       "\x01\x00\x00\xc0";
   utils::decodePcmSamples(encoded32bit, decodedSamples, 5, 32);
 
-  REQUIRE(samples[0] == Approx(decodedSamples[0]).epsilon(1e-6));
-  REQUIRE(samples[1] == Approx(decodedSamples[1]).epsilon(1e-6));
-  REQUIRE(samples[2] == Approx(decodedSamples[2]).epsilon(1e-6));
-  REQUIRE(samples[3] == Approx(decodedSamples[3]).epsilon(1e-6));
-  REQUIRE(samples[4] == Approx(decodedSamples[4]).epsilon(1e-6));
+  REQUIRE(samples[0] == Catch::Detail::Approx(decodedSamples[0]).epsilon(1e-6));
+  REQUIRE(samples[1] == Catch::Detail::Approx(decodedSamples[1]).epsilon(1e-6));
+  REQUIRE(samples[2] == Catch::Detail::Approx(decodedSamples[2]).epsilon(1e-6));
+  REQUIRE(samples[3] == Catch::Detail::Approx(decodedSamples[3]).epsilon(1e-6));
+  REQUIRE(samples[4] == Catch::Detail::Approx(decodedSamples[4]).epsilon(1e-6));
 }
 
 TEST_CASE("encode_pcm_samples_8bit") {
@@ -143,11 +143,11 @@ TEST_CASE("encode_decode_pcm_samples_16bit") {
   float decodedSamples[] = {0.f, 0.f, 0.f, 0.f, 0.f};
   utils::encodePcmSamples(samples, encoded16bit, 5, 16);
   utils::decodePcmSamples(encoded16bit, decodedSamples, 5, 16);
-  REQUIRE(samples[0] == Approx(decodedSamples[0]).epsilon(1e-2));
-  REQUIRE(samples[1] == Approx(decodedSamples[1]).epsilon(1e-2));
-  REQUIRE(samples[2] == Approx(decodedSamples[2]).epsilon(1e-2));
-  REQUIRE(samples[3] == Approx(decodedSamples[3]).epsilon(1e-2));
-  REQUIRE(samples[4] == Approx(decodedSamples[4]).epsilon(1e-2));
+  REQUIRE(samples[0] == Catch::Detail::Approx(decodedSamples[0]).epsilon(1e-2));
+  REQUIRE(samples[1] == Catch::Detail::Approx(decodedSamples[1]).epsilon(1e-2));
+  REQUIRE(samples[2] == Catch::Detail::Approx(decodedSamples[2]).epsilon(1e-2));
+  REQUIRE(samples[3] == Catch::Detail::Approx(decodedSamples[3]).epsilon(1e-2));
+  REQUIRE(samples[4] == Catch::Detail::Approx(decodedSamples[4]).epsilon(1e-2));
 }
 
 TEST_CASE("encode_decode_pcm_samples_24bit") {
@@ -156,11 +156,11 @@ TEST_CASE("encode_decode_pcm_samples_24bit") {
   float decodedSamples[] = {0.f, 0.f, 0.f, 0.f, 0.f};
   utils::encodePcmSamples(samples, encoded24bit, 5, 24);
   utils::decodePcmSamples(encoded24bit, decodedSamples, 5, 24);
-  REQUIRE(samples[0] == Approx(decodedSamples[0]).epsilon(1e-3));
-  REQUIRE(samples[1] == Approx(decodedSamples[1]).epsilon(1e-3));
-  REQUIRE(samples[2] == Approx(decodedSamples[2]).epsilon(1e-3));
-  REQUIRE(samples[3] == Approx(decodedSamples[3]).epsilon(1e-3));
-  REQUIRE(samples[4] == Approx(decodedSamples[4]).epsilon(1e-3));
+  REQUIRE(samples[0] == Catch::Detail::Approx(decodedSamples[0]).epsilon(1e-3));
+  REQUIRE(samples[1] == Catch::Detail::Approx(decodedSamples[1]).epsilon(1e-3));
+  REQUIRE(samples[2] == Catch::Detail::Approx(decodedSamples[2]).epsilon(1e-3));
+  REQUIRE(samples[3] == Catch::Detail::Approx(decodedSamples[3]).epsilon(1e-3));
+  REQUIRE(samples[4] == Catch::Detail::Approx(decodedSamples[4]).epsilon(1e-3));
 }
 
 TEST_CASE("encode_decode_pcm_samples_32bit") {
@@ -169,11 +169,11 @@ TEST_CASE("encode_decode_pcm_samples_32bit") {
   float decodedSamples[] = {0.f, 0.f, 0.f, 0.f, 0.f};
   utils::encodePcmSamples(samples, encoded32bit, 5, 32);
   utils::decodePcmSamples(encoded32bit, decodedSamples, 5, 32);
-  REQUIRE(samples[0] == Approx(decodedSamples[0]).epsilon(1e-6));
-  REQUIRE(samples[1] == Approx(decodedSamples[1]).epsilon(1e-6));
-  REQUIRE(samples[2] == Approx(decodedSamples[2]).epsilon(1e-6));
-  REQUIRE(samples[3] == Approx(decodedSamples[3]).epsilon(1e-6));
-  REQUIRE(samples[4] == Approx(decodedSamples[4]).epsilon(1e-6));
+  REQUIRE(samples[0] == Catch::Detail::Approx(decodedSamples[0]).epsilon(1e-6));
+  REQUIRE(samples[1] == Catch::Detail::Approx(decodedSamples[1]).epsilon(1e-6));
+  REQUIRE(samples[2] == Catch::Detail::Approx(decodedSamples[2]).epsilon(1e-6));
+  REQUIRE(samples[3] == Catch::Detail::Approx(decodedSamples[3]).epsilon(1e-6));
+  REQUIRE(samples[4] == Catch::Detail::Approx(decodedSamples[4]).epsilon(1e-6));
 }
 
 /// check that a given PCM sample value when decoded then encoded results in

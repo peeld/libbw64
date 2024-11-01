@@ -177,13 +177,13 @@ TEST_CASE("write_read_16bit_clipped") {
   std::vector<float> data(frames * bw64File->channels(), 0.f);
   auto readFrames = bw64File->read(&data[0], frames);
   REQUIRE(readFrames == frames);
-  REQUIRE(data.at(0) == Approx(1.f).epsilon(1e-2));
-  REQUIRE(data.at(100) == Approx(1.f).epsilon(1e-2));
-  REQUIRE(data.at(200) == Approx(1.f).epsilon(1e-2));
-  REQUIRE(data.at(400) == Approx(1.f).epsilon(1e-2));
-  REQUIRE(data.at(800) == Approx(1.f).epsilon(1e-2));
-  REQUIRE(data.at(1600) == Approx(1.f).epsilon(1e-2));
-  REQUIRE(data.at(3200) == Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(0) == Catch::Detail::Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(100) == Catch::Detail::Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(200) == Catch::Detail::Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(400) == Catch::Detail::Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(800) == Catch::Detail::Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(1600) == Catch::Detail::Approx(1.f).epsilon(1e-2));
+  REQUIRE(data.at(3200) == Catch::Detail::Approx(1.f).epsilon(1e-2));
 }
 
 TEST_CASE("write_read_24bit_clipped") {
@@ -193,13 +193,13 @@ TEST_CASE("write_read_24bit_clipped") {
   std::vector<float> data(frames * bw64File->channels(), 0.f);
   auto readFrames = bw64File->read(&data[0], frames);
   REQUIRE(readFrames == frames);
-  REQUIRE(data.at(0) == Approx(1.f).epsilon(1e-3));
-  REQUIRE(data.at(100) == Approx(1.f).epsilon(1e-3));
-  REQUIRE(data.at(200) == Approx(1.f).epsilon(1e-3));
-  REQUIRE(data.at(400) == Approx(1.f).epsilon(1e-3));
-  REQUIRE(data.at(800) == Approx(1.f).epsilon(1e-3));
-  REQUIRE(data.at(1600) == Approx(1.f).epsilon(1e-3));
-  REQUIRE(data.at(3200) == Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(0) == Catch::Detail::Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(100) == Catch::Detail::Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(200) == Catch::Detail::Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(400) == Catch::Detail::Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(800) == Catch::Detail::Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(1600) == Catch::Detail::Approx(1.f).epsilon(1e-3));
+  REQUIRE(data.at(3200) == Catch::Detail::Approx(1.f).epsilon(1e-3));
 }
 
 TEST_CASE("write_read_32bit_clipped") {
@@ -209,13 +209,13 @@ TEST_CASE("write_read_32bit_clipped") {
   std::vector<float> data(frames * bw64File->channels(), 0.f);
   auto readFrames = bw64File->read(&data[0], frames);
   REQUIRE(readFrames == frames);
-  REQUIRE(data.at(0) == Approx(1.f).epsilon(1e-6));
-  REQUIRE(data.at(100) == Approx(1.f).epsilon(1e-6));
-  REQUIRE(data.at(200) == Approx(1.f).epsilon(1e-6));
-  REQUIRE(data.at(400) == Approx(1.f).epsilon(1e-6));
-  REQUIRE(data.at(800) == Approx(1.f).epsilon(1e-6));
-  REQUIRE(data.at(1600) == Approx(1.f).epsilon(1e-6));
-  REQUIRE(data.at(3200) == Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(0) == Catch::Detail::Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(100) == Catch::Detail::Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(200) == Catch::Detail::Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(400) == Catch::Detail::Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(800) == Catch::Detail::Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(1600) == Catch::Detail::Approx(1.f).epsilon(1e-6));
+  REQUIRE(data.at(3200) == Catch::Detail::Approx(1.f).epsilon(1e-6));
 }
 
 void writeRandom(const std::string& filename, uint16_t bitDepth,
@@ -319,9 +319,9 @@ TEST_CASE("write_read_big", "[.big]") {
       REQUIRE(readFrames == blockSize);
       for (size_t i = 0; i < blockSize; i++) {
         if (i % 2 == 0)
-          REQUIRE(block[i] == Approx(0.5f).epsilon(1e-2));
+          REQUIRE(block[i] == Catch::Detail::Approx(0.5f).epsilon(1e-2));
         else
-          REQUIRE(block[i] == Approx(0.0f).epsilon(1e-2));
+          REQUIRE(block[i] == Catch::Detail::Approx(0.0f).epsilon(1e-2));
       }
     }
   }
@@ -362,9 +362,9 @@ TEST_CASE("write_read_big_axml", "[.big]") {
     REQUIRE(readFrames == blockSize);
     for (size_t i = 0; i < blockSize; i++) {
       if (i % 2 == 0)
-        REQUIRE(block[i] == Approx(0.5f).epsilon(1e-2));
+        REQUIRE(block[i] == Catch::Detail::Approx(0.5f).epsilon(1e-2));
       else
-        REQUIRE(block[i] == Approx(0.0f).epsilon(1e-2));
+        REQUIRE(block[i] == Catch::Detail::Approx(0.0f).epsilon(1e-2));
     }
 
     // check axml
